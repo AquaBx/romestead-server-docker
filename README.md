@@ -68,9 +68,6 @@ docker run -d \
 | PGID              | 1000            | Group ID for file permissions |
 | UPDATE_ON_START   | true            | Set to `false` to skip downloading and validating server files on startup |
 
-> [!NOTE]
-> Steam app id is fixed to `4763510` in the container scripts.
-
 ## Volumes
 
 - `/home/steam/server-files` - Server installation files, saves, and configuration
