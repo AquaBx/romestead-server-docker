@@ -23,6 +23,10 @@ fi
 
 write_config
 
+mkdir -p /home/steam/.local/share/GameAnalytics
+mkdir -p /home/steam/.config
+
 chown -R steam:steam /home/steam/server-files
+chown -R steam:steam /home/steam/.local /home/steam/.config
 
 exec su - steam -c "cd /home/steam/server && ./start.sh"

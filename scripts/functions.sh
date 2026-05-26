@@ -56,7 +56,7 @@ install() {
   /depotdownloader/DepotDownloader \
     -app 4763510 \
     -dir /home/steam/server-files \
-    -validate \
+    -validate
 
   LogSuccess "Server install complete"
 }
