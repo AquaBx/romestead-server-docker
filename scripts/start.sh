@@ -10,4 +10,4 @@ export LD_LIBRARY_PATH="/home/steam/server-files:/home/steam/server-files/linux6
 
 LogAction "Starting Romestead Dedicated Server"
 
-exec dotnet Server.dll
+exec dotnet Server.dll < <(tail -f /dev/null)
