@@ -30,7 +30,15 @@ RUN curl -sL "https://github.com/SteamRE/DepotDownloader/releases/download/Depot
 RUN useradd -m -s /bin/bash steam
 
 ENV HOME=/home/steam \
-    UPDATE_ON_START=true
+    UPDATE_ON_START=true \
+    AUTO_START_WORLD_NAME="" \
+    AUTO_CREATE_AND_LOAD_WORLD=false \
+    AUTO_CREATE_WORLD_SIZE=1 \
+    AUTO_CREATE_WORLD_SEED=null \
+    PASSWORD="" \
+    PORT=8050 \
+    MAX_PLAYERS=8 \
+    ENABLE_CHEATS=false
 
 COPY ./scripts /home/steam/server/
 COPY branding /branding

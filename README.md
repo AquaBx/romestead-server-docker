@@ -17,7 +17,7 @@ Eat lag for breakfast
 
 ## Romestead Dedicated Server Docker
 
-A Docker container for downloading Romestead dedicated server files using DepotDownloader.
+A Docker container for running a Romestead dedicated server using DepotDownloader.
 
 ## Server Requirements
 
@@ -29,7 +29,7 @@ A Docker container for downloading Romestead dedicated server files using DepotD
 
 ## How to use
 
-Copy the `.env.example` file to a new file called `.env`. Then run the container to download files.
+Copy the `.env.example` file to a new file called `.env`. Then run the container.
 
 ### Docker Compose
 
@@ -37,7 +37,11 @@ Copy the `.env.example` file to a new file called `.env`. Then run the container
 services:
   romestead:
     image: indifferentbroccoli/romestead-server-docker
+    restart: unless-stopped
     container_name: romestead
+    stop_grace_period: 30s
+    ports:
+      - 8050:8050/udp
     env_file:
       - .env
     volumes:
@@ -54,7 +58,10 @@ docker compose up -d
 
 ```bash
 docker run -d \
+  --restart unless-stopped \
     --name romestead \
+  --stop-timeout 30 \
+  -p 8050:8050/udp \
     --env-file .env \
     -v ./server-files:/home/steam/server-files \
     indifferentbroccoli/romestead-server-docker
@@ -67,6 +74,24 @@ docker run -d \
 | PUID              | 1000            | User ID for file permissions |
 | PGID              | 1000            | Group ID for file permissions |
 | UPDATE_ON_START   | true            | Set to `false` to skip downloading and validating server files on startup |
+| AUTO_START_WORLD_NAME | (empty)     | `config.json` `AutoStartWorldName` |
+| AUTO_CREATE_AND_LOAD_WORLD | false  | `config.json` `AutoCreateAndLoadWorld` |
+| AUTO_CREATE_WORLD_SIZE | 1          | `config.json` `AutoCreateWorldSize` |
+| AUTO_CREATE_WORLD_SEED | null       | `config.json` `AutoCreateWorldSeed` |
+| PASSWORD          | null            | `config.json` `Password` |
+| PORT              | 8050            | `config.json` `Port` and container UDP mapping |
+| MAX_PLAYERS       | 8               | `config.json` `MaxPlayers` |
+| ENABLE_CHEATS     | false           | `config.json` `EnableCheats` |
+
+## Port Forwarding
+
+Forward these ports through your firewall/router:
+
+| Port  | Protocol | Purpose                  |
+|-------|----------|--------------------------|
+| 8050  | UDP      | Game traffic             |
+
+See [portforward.com](https://portforward.com) for router-specific guides.
 
 ## Volumes
 

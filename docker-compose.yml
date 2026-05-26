@@ -1,7 +1,11 @@
 services:
   romestead:
     image: indifferentbroccoli/romestead-server-docker
+    restart: unless-stopped
     container_name: romestead
+    stop_grace_period: 30s
+    ports:
+      - 8050:8050/udp
     env_file:
       - .env
     volumes:

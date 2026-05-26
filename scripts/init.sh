@@ -21,4 +21,8 @@ else
     LogWarn "UPDATE_ON_START is set to false, skipping server update"
 fi
 
+write_config
+
 chown -R steam:steam /home/steam/server-files
+
+exec su - steam -c "cd /home/steam/server && ./start.sh"
