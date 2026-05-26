@@ -40,7 +40,6 @@ install() {
     -app 4763510 \
     -dir /home/steam/server-files \
     -validate \
-    -username anonymous
 
   LogSuccess "Server install complete"
 }
