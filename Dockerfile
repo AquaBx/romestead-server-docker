@@ -32,7 +32,7 @@ RUN useradd -m -s /bin/bash steam
 ENV HOME=/home/steam \
     UPDATE_ON_START=true \
     AUTO_START_WORLD_NAME="" \
-    AUTO_CREATE_AND_LOAD_WORLD=false \
+    AUTO_CREATE_AND_LOAD_WORLD=true \
     AUTO_CREATE_WORLD_SIZE=1 \
     AUTO_CREATE_WORLD_SEED=null \
     PASSWORD="" \

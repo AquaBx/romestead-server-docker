@@ -75,7 +75,7 @@ docker run -d \
 | PGID              | 1000            | Group ID for file permissions |
 | UPDATE_ON_START   | true            | Set to `false` to skip downloading and validating server files on startup |
 | AUTO_START_WORLD_NAME | (empty)     | `config.json` `AutoStartWorldName` |
-| AUTO_CREATE_AND_LOAD_WORLD | false  | `config.json` `AutoCreateAndLoadWorld` |
+| AUTO_CREATE_AND_LOAD_WORLD | true   | `config.json` `AutoCreateAndLoadWorld` |
 | AUTO_CREATE_WORLD_SIZE | 1          | `config.json` `AutoCreateWorldSize` |
 | AUTO_CREATE_WORLD_SEED | null       | `config.json` `AutoCreateWorldSeed` |
 | PASSWORD          | null            | `config.json` `Password` |
