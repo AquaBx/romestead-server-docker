@@ -38,6 +38,9 @@ mkdir -p /home/steam/.config
 chown -R steam:steam /home/steam/server-files
 chown -R steam:steam /home/steam/.local /home/steam/.config
 
+mkfifo /tmp/romestead-stdin
+chmod 666 /tmp/romestead-stdin
+
 su - steam -c "cd /home/steam/server && ./start.sh" &
 killpid="$!"
 
