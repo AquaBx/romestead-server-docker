@@ -39,7 +39,7 @@ write_config() {
   "AutoCreateAndLoadWorld": ${AUTO_CREATE_AND_LOAD_WORLD:-true},
   "AutoCreateWorldSize": ${AUTO_CREATE_WORLD_SIZE:-1},
   "AutoCreateWorldSeed": ${AUTO_CREATE_WORLD_SEED:-null},
-  "Password": ${PASSWORD:-null},
+  "Password": "${PASSWORD:-}",
   "Port": ${PORT:-8050},
   "MaxPlayers": ${MAX_PLAYERS:-8},
   "EnableCheats": ${ENABLE_CHEATS:-false}
