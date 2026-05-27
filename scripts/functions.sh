@@ -33,12 +33,19 @@ Log() {
 }
 
 write_config() {
+  local auto_create_world_seed_json
+  if [ -n "${AUTO_CREATE_WORLD_SEED:-}" ] && [ "${AUTO_CREATE_WORLD_SEED}" != "null" ]; then
+    auto_create_world_seed_json="\"${AUTO_CREATE_WORLD_SEED}\""
+  else
+    auto_create_world_seed_json="null"
+  fi
+
   cat > /home/steam/server-files/config.json <<EOF
 {
   "AutoStartWorldName": "${AUTO_START_WORLD_NAME:-}",
   "AutoCreateAndLoadWorld": ${AUTO_CREATE_AND_LOAD_WORLD:-true},
   "AutoCreateWorldSize": ${AUTO_CREATE_WORLD_SIZE:-1},
-  "AutoCreateWorldSeed": ${AUTO_CREATE_WORLD_SEED:-null},
+  "AutoCreateWorldSeed": ${auto_create_world_seed_json},
   "Password": "${PASSWORD:-}",
   "Port": ${PORT:-8050},
   "MaxPlayers": ${MAX_PLAYERS:-8},
