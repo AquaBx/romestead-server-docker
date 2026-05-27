@@ -10,6 +10,7 @@ export LD_LIBRARY_PATH="/home/steam/server-files:/home/steam/server-files/linux6
 
 FIFO=/tmp/romestead-stdin
 mkfifo "$FIFO"
+chmod 622 "$FIFO"
 
 LogAction "Starting Romestead Dedicated Server"
 
