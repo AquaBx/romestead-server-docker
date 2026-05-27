@@ -60,3 +60,33 @@ install() {
 
   LogSuccess "Server install complete"
 }
+
+shutdown_server() {
+  local return_val=0
+  LogAction "Attempting graceful server shutdown"
+
+  local pid
+  pid=$(pgrep -f "dotnet Server.dll")
+
+  if [ -n "$pid" ]; then
+    kill -SIGTERM "$pid"
+
+    local count=0
+    while [ $count -lt 30 ] && kill -0 "$pid" 2>/dev/null; do
+      sleep 1
+      count=$((count + 1))
+    done
+
+    if kill -0 "$pid" 2>/dev/null; then
+      LogWarn "Server did not shutdown gracefully, forcing shutdown"
+      return_val=1
+    else
+      LogSuccess "Server shutdown gracefully"
+    fi
+  else
+    LogWarn "Server process not found"
+    return_val=1
+  fi
+
+  return "$return_val"
+}

@@ -1,6 +1,15 @@
 #!/bin/bash
 source "/home/steam/server/functions.sh"
 
+term_handler() {
+    if ! shutdown_server; then
+        kill -SIGTERM "$(pgrep -f "dotnet Server.dll")"
+    fi
+    tail --pid="$killpid" -f 2>/dev/null
+}
+
+trap 'term_handler' SIGTERM SIGINT
+
 LogAction "Set file permissions"
 
 if [ -z "${PUID}" ] || [ -z "${PGID}" ]; then
@@ -29,4 +38,7 @@ mkdir -p /home/steam/.config
 chown -R steam:steam /home/steam/server-files
 chown -R steam:steam /home/steam/.local /home/steam/.config
 
-exec su - steam -c "cd /home/steam/server && ./start.sh"
+su - steam -c "cd /home/steam/server && ./start.sh" &
+killpid="$!"
+
+wait "$killpid"

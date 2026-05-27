@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     ca-certificates \
     unzip \
+    procps \
     libicu-dev \
     gettext-base \
     && apt-get clean \
