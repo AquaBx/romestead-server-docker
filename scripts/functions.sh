@@ -69,7 +69,7 @@ shutdown_server() {
   pid=$(pgrep -f "dotnet Server.dll")
 
   if [ -n "$pid" ]; then
-    kill -SIGTERM "$pid"
+    echo "stop" > /tmp/romestead-stdin
 
     local count=0
     while [ $count -lt 30 ] && kill -0 "$pid" 2>/dev/null; do
