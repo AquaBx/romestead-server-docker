@@ -93,6 +93,28 @@ Forward these ports through your firewall/router:
 
 See [portforward.com](https://portforward.com) for router-specific guides.
 
+## Server Commands
+
+The server accepts commands via stdin. You can send commands using `docker exec`:
+
+```bash
+docker exec -i romestead bash -c 'echo "COMMAND" > /tmp/romestead-stdin'
+```
+
+| Command           | Description                              |
+|-------------------|------------------------------------------|
+| `stop`            | Save the world and stop the server       |
+| `quickstop`       | Stop the server without saving           |
+| `save`            | Save the world                           |
+| `quicksave`       | Save the world (quick)                   |
+| `list`            | List connected players                   |
+| `say <message>`   | Broadcast a message to all players       |
+| `kick <player>`   | Kick a player from the server            |
+| `ban <player>`    | Ban a player from the server             |
+| `unban <player>`  | Unban a player                           |
+
+**Note:** When the container is stopped (`docker stop` or `docker compose down`), the server automatically receives a `stop` command to save the world before shutting down.
+
 ## Volumes
 
 - `/home/steam/server-files` - Server installation files, saves, and configuration
