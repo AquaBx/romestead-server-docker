@@ -1,5 +1,5 @@
 # BUILD THE SERVER IMAGE
-FROM --platform=linux/amd64 debian:bookworm-slim
+FROM debian:bookworm-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -16,14 +16,33 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install .NET 8 runtime (required for DepotDownloader)
 RUN curl -sL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh && \
     chmod +x /tmp/dotnet-install.sh && \
-    /tmp/dotnet-install.sh --channel 8.0 --runtime dotnet --install-dir /usr/share/dotnet && \
+    /tmp/dotnet-install.sh  --architecture x64 --channel 8.0 --runtime dotnet --install-dir /usr/share/dotnet && \
     ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet && \
     rm /tmp/dotnet-install.sh
 
 # Download DepotDownloader
 ARG DEPOT_DOWNLOADER_VERSION=3.4.0
-RUN curl -sL "https://github.com/SteamRE/DepotDownloader/releases/download/DepotDownloader_${DEPOT_DOWNLOADER_VERSION}/DepotDownloader-linux-x64.zip" -o /tmp/dd.zip && \
-    mkdir -p /depotdownloader && \
+ARG TARGETPLATFORM
+RUN <<EOF
+if [ "$TARGETPLATFORM" = "linux/arm64" ]; then
+    target="linux-arm64"
+    apt update
+    apt install wget gpg -y
+    wget https://ryanfortner.github.io/box64-debs/box64.list -O /etc/apt/sources.list.d/box64.list
+    wget -qO- https://ryanfortner.github.io/box64-debs/KEY.gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/box64-debs-archive-keyring.gpg 
+    apt update
+    apt install box64 -y
+elif [ "$TARGETPLATFORM" = "linux/amd64" ]; then
+    target="linux-x64"
+else
+    echo "Non supported architecture : $TARGETPLATFORM"
+    exit 1
+fi
+
+curl -sL "https://github.com/SteamRE/DepotDownloader/releases/download/DepotDownloader_${DEPOT_DOWNLOADER_VERSION}/DepotDownloader-${target}.zip" -o /tmp/dd.zip 
+EOF
+
+RUN mkdir -p /depotdownloader && \
     unzip /tmp/dd.zip -d /depotdownloader && \
     chmod +x /depotdownloader/DepotDownloader && \
     rm /tmp/dd.zip
