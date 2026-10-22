@@ -65,7 +65,7 @@ install() {
     -dir /home/steam/server-files \
     -validate
 
-  patch -p1 -d /home/steam/server-files < server.patch
+  patch -l -p1 -d /home/steam/server-files < server.patch
   cp -r /home/steam/server/linux-arm64 /home/steam/server-files/runtimes
   LogSuccess "Server install complete"
 }
