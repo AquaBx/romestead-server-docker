@@ -1,22 +1,6 @@
-FROM debian:bookworm-slim AS steamworks_build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS steamworks_build
 
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    git \
-    curl \
-    ca-certificates \
-    unzip \
-    procps \
-    libicu-dev \
-    gettext-base \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN curl -sL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh && \
-    chmod +x /tmp/dotnet-install.sh && \
-    /tmp/dotnet-install.sh --channel 8.0 --install-dir /usr/share/dotnet && \
-    ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet && \
-    rm /tmp/dotnet-install.sh
+RUN apk add git
 
 WORKDIR /opt/build
 RUN git clone --depth 1 --branch 2025.164.1 https://github.com/rlabrecque/Steamworks.NET.git
