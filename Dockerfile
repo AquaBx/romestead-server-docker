@@ -11,15 +11,27 @@ RUN git apply ./steamworks.patch
 WORKDIR /opt/build/Steamworks.NET/Standalone2.0
 RUN dotnet build -t:BatchBuild Steamworks.NET.Standard.sln
 
+FROM alpine AS dd-amd64
+ARG DEPOT_DOWNLOADER_VERSION=3.4.0
+ADD https://github.com/SteamRE/DepotDownloader/releases/download/DepotDownloader_${DEPOT_DOWNLOADER_VERSION}/DepotDownloader-linux-x64.zip /tmp/dd.zip
+
+FROM alpine AS dd-arm64
+ARG DEPOT_DOWNLOADER_VERSION=3.4.0
+ADD https://github.com/SteamRE/DepotDownloader/releases/download/DepotDownloader_${DEPOT_DOWNLOADER_VERSION}/DepotDownloader-linux-arm64.zip /tmp/dd.zip
+
+FROM dd-${TARGETARCH} AS dd
+RUN mkdir -p /depotdownloader && \
+    unzip /tmp/dd.zip -d /depotdownloader && \
+    chmod +x /depotdownloader/DepotDownloader && \
+    rm /tmp/dd.zip
+
 # BUILD THE SERVER IMAGE
-FROM debian:bookworm-slim
+FROM mcr.microsoft.com/dotnet/runtime:8.0-bookworm-slim AS final
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
     ca-certificates \
-    unzip \
     procps \
     libicu-dev \
     gettext-base \
@@ -27,33 +39,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install .NET 8 runtime (required for DepotDownloader)
-RUN curl -sL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh && \
-    chmod +x /tmp/dotnet-install.sh && \
-    /tmp/dotnet-install.sh --channel 8.0 --runtime dotnet --install-dir /usr/share/dotnet && \
-    ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet && \
-    rm /tmp/dotnet-install.sh
-
-# Download DepotDownloader
-ARG DEPOT_DOWNLOADER_VERSION=3.4.0
-ARG TARGETPLATFORM
-RUN <<EOF
-if [ "$TARGETPLATFORM" = "linux/arm64" ]; then
-    target="linux-arm64"
-elif [ "$TARGETPLATFORM" = "linux/amd64" ]; then
-    target="linux-x64"
-else
-    echo "Non supported architecture : $TARGETPLATFORM"
-    exit 1
-fi
-
-curl -sL "https://github.com/SteamRE/DepotDownloader/releases/download/DepotDownloader_${DEPOT_DOWNLOADER_VERSION}/DepotDownloader-${target}.zip" -o /tmp/dd.zip 
-EOF
-
-RUN mkdir -p /depotdownloader && \
-    unzip /tmp/dd.zip -d /depotdownloader && \
-    chmod +x /depotdownloader/DepotDownloader && \
-    rm /tmp/dd.zip
+COPY --from=dd /depotdownloader /depotdownloader
 
 RUN useradd -m -s /bin/bash steam
 
