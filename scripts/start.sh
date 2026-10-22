@@ -12,7 +12,7 @@ FIFO=/tmp/romestead-stdin
 
 LogAction "Starting Romestead Dedicated Server"
 
-script -qfc "dotnet Server.dll" /dev/null < "$FIFO" &
+dotnet Server.dll < "$FIFO" &
 dotnet_pid=$!
 exec 3>"$FIFO"
 
