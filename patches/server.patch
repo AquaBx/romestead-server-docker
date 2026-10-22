@@ -1,0 +1,19 @@
+diff --git a/Server.deps.json b/Server.deps.json
+index cf47702..219a25c 100644
+--- a/Server.deps.json
++++ b/Server.deps.json
+@@ -843,2 +843,14 @@
+         "runtimeTargets": {
++          "runtimes/linux-arm64/lib/netstandard2.1/Steamworks.NET.dll": {
++            "rid": "linux-arm64",
++            "assetType": "runtime",
++            "assemblyVersion": "2024.8.0.0",
++            "fileVersion": "2024.8.0.0"
++          },
++          "runtimes/osx-arm64/lib/netstandard2.1/Steamworks.NET.dll": {
++            "rid": "osx-arm64",
++            "assetType": "runtime",
++            "assemblyVersion": "2024.8.0.0",
++            "fileVersion": "2024.8.0.0"
++          },
+           "runtimes/linux-x64/lib/netstandard2.1/Steamworks.NET.dll": {

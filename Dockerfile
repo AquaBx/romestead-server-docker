@@ -1,3 +1,32 @@
+FROM debian:bookworm-slim AS steamworks_build
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    ca-certificates \
+    unzip \
+    procps \
+    libicu-dev \
+    gettext-base \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -sL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh && \
+    chmod +x /tmp/dotnet-install.sh && \
+    /tmp/dotnet-install.sh --channel 8.0 --install-dir /usr/share/dotnet && \
+    ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet && \
+    rm /tmp/dotnet-install.sh
+
+WORKDIR /opt/build
+RUN git clone --depth 1 --branch 2025.164.1 https://github.com/rlabrecque/Steamworks.NET.git
+WORKDIR /opt/build/Steamworks.NET
+COPY ./patches/steamworks.patch ./steamworks.patch
+RUN git apply ./steamworks.patch
+
+WORKDIR /opt/build/Steamworks.NET/Standalone2.0
+RUN dotnet build -t:BatchBuild Steamworks.NET.Standard.sln
+
 # BUILD THE SERVER IMAGE
 FROM debian:bookworm-slim
 
@@ -10,13 +39,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     procps \
     libicu-dev \
     gettext-base \
+    patch \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Install .NET 8 runtime (required for DepotDownloader)
 RUN curl -sL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh && \
     chmod +x /tmp/dotnet-install.sh && \
-    /tmp/dotnet-install.sh  --architecture x64 --channel 8.0 --runtime dotnet --install-dir /usr/share/dotnet && \
+    /tmp/dotnet-install.sh --channel 8.0 --runtime dotnet --install-dir /usr/share/dotnet && \
     ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet && \
     rm /tmp/dotnet-install.sh
 
@@ -26,12 +56,6 @@ ARG TARGETPLATFORM
 RUN <<EOF
 if [ "$TARGETPLATFORM" = "linux/arm64" ]; then
     target="linux-arm64"
-    apt update
-    apt install wget gpg -y
-    wget https://ryanfortner.github.io/box64-debs/box64.list -O /etc/apt/sources.list.d/box64.list
-    wget -qO- https://ryanfortner.github.io/box64-debs/KEY.gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/box64-debs-archive-keyring.gpg 
-    apt update
-    apt install box64 -y
 elif [ "$TARGETPLATFORM" = "linux/amd64" ]; then
     target="linux-x64"
 else
@@ -61,6 +85,9 @@ ENV HOME=/home/steam \
     ENABLE_CHEATS=false
 
 COPY ./scripts /home/steam/server/
+COPY ./patches/server.patch /home/steam/server/server.patch
+COPY --from=steamworks_build /opt/build/Steamworks.NET/Standalone2.0/bin/nuget/runtime/linux-arm64 /home/steam/server/linux-arm64
+
 COPY branding /branding
 
 RUN mkdir -p /home/steam/server-files && \

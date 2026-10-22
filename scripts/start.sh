@@ -12,16 +12,7 @@ FIFO=/tmp/romestead-stdin
 
 LogAction "Starting Romestead Dedicated Server"
 
-if [ "$(uname -m)" = "aarch64" ]; then
-    export BOX64_DYNAREC_SAFEFLAGS=2
-    export BOX64_DYNAREC_X87DOUBLE=1
-    export BOX64_LOG=0
-    export STRONGMEM=2
-    script -qfc "box64 dotnet Server.dll" /dev/null < "$FIFO" &
-else
-    dotnet Server.dll < "$FIFO" &
-fi
-
+script -qfc "dotnet Server.dll" /dev/null < "$FIFO" &
 dotnet_pid=$!
 exec 3>"$FIFO"
 
