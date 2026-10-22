@@ -2,7 +2,9 @@ diff --git a/Server.deps.json b/Server.deps.json
 index cf47702..219a25c 100644
 --- a/Server.deps.json
 +++ b/Server.deps.json
-@@ -843,2 +843,14 @@
+@@ -841,6 +841,18 @@
+           }
+         },
          "runtimeTargets": {
 +          "runtimes/linux-arm64/lib/netstandard2.1/Steamworks.NET.dll": {
 +            "rid": "linux-arm64",
@@ -17,3 +19,5 @@ index cf47702..219a25c 100644
 +            "fileVersion": "2024.8.0.0"
 +          },
            "runtimes/linux-x64/lib/netstandard2.1/Steamworks.NET.dll": {
+             "rid": "linux-x64",
+             "assetType": "runtime",
